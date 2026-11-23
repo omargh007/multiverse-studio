@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use Multiverse Studio, please cite it as below."
+title: "Multiverse Studio: a no-code workbench for multiverse analysis with causal guardrails, blind mode and cherry-pick checks"
+type: software
+version: 0.1.0.dev0
+license: MIT
+repository-code: "https://github.com/omargh007/multiverse-studio"
+authors:
+  - family-names: "LastName1"
+    given-names: "FirstName1"
+  - family-names: "LastName2"
+    given-names: "FirstName2"
+  - family-names: "LastName3"
+    given-names: "FirstName3"
+keywords:
+  - multiverse analysis
+  - specification curve
+  - robustness
+  - reproducibility
+  - causal inference
+# Add after the first GitHub release is archived on Zenodo:
+# doi: 10.5281/zenodo.XXXXXXX

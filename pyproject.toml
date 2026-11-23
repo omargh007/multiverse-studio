@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "multiverse-studio"
+version = "0.1.0.dev0"
+description = "A no-code desktop workbench for multiverse / specification-curve analysis with causal guardrails, blind mode and cherry-pick checks."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Multiverse Studio Team" }]
+keywords = ["multiverse analysis", "specification curve", "robustness", "reproducibility", "statistics", "gui"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "statsmodels>=0.14",
+    "matplotlib>=3.7",
+    "customtkinter>=5.2",
+    "openpyxl>=3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+]
+exe = ["pyinstaller>=6.0"]
+
+[project.scripts]
+multiverse-studio = "multiverse_studio.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/omargh007/multiverse-studio"
+Issues = "https://github.com/omargh007/multiverse-studio/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/multiverse_studio"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+source = ["multiverse_studio"]
+omit = ["*/gui/*", "*/__main__.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
