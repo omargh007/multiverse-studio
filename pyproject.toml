@@ -67,3 +67,7 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# UI copy: keep each user-facing sentence on one line so it's easy to edit.
+"src/multiverse_studio/gui/pages/*" = ["E501"]
