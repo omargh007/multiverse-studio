@@ -14,9 +14,21 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
   - verdict (Simonsohn et al., 2020) with a permutation test;
   - decision importance.
 - Causal guardrails: three plain questions per variable. Bad controls *and* subsets on bad variables are excluded.
-- Blind mode: Y shuffled while planning; the plan is locked with a SHA-256 hash that includes a fingerprint of the data file.
+- Blind mode: no result is shown until the plan is locked with a SHA-256 hash that includes a fingerprint of the data file (`blind_view` also offers an outcome-shuffled copy for previews).
 - Cherry-pick check: where a reported estimate sits among the valid analyses.
 - Teaching simulator with five scenarios that have a known true effect.
 - Auto-written methods and results paragraphs.
 - Session (de)serialisation, and export of a runnable reproduction script.
 - Design tokens (light and dark) and a chart palette validated for colour-blind safety and contrast.
+- Desktop GUI (CustomTkinter), a 7-step sidebar wizard:
+  - load data, a saved analysis or an example with a known answer;
+  - question and blind mode;
+  - analysis choices with a live count and a limit;
+  - fair comparisons (guardrail questions);
+  - run in a background thread with a live preview, cancel and a luck check;
+  - results: verdict, cherry-pick check, clickable specification curve, decision importance, ready-to-use text;
+  - save and share: script, JSON report, analysis file, plan-integrity check.
+- Light/dark mode, text-size setting for projectors, keyboard shortcuts.
+- JSON report with environment capture; save and reopen analyses (.msession).
+- Specification-curve and decision-importance figures (Matplotlib, embedded with FigureCanvasTkAgg).
+- End-to-end GUI smoke test.

@@ -2,16 +2,19 @@
 
 **Does your finding survive every reasonable way of analysing it? Find out without writing code.**
 
-Multiverse Studio is a free, offline desktop app for **multiverse / specification-curve analysis** for researchers and students who don't program. You load a CSV or Excel file, pick your question (does X affect Y?), and tick the analysis choices you could reasonably make. The app runs every combination and shows whether your result is **consistent** or **fragile**.
+Multiverse Studio is a free, offline desktop app for **multiverse / specification-curve analysis**, built for researchers, analysts, reviewers and students who don't program. You load a CSV or Excel file, pick your question (does X affect Y?), and tick the analysis choices a careful researcher could defend. The app runs every combination and shows whether your result is **consistent** or **fragile**.
+
+![Results page](docs/screenshots/results.png)
 
 What makes it different from existing tools such as specr, RobustiPy and Boba:
 
-- 🖱️ **No code.** The whole workflow is point-and-click, and it exports a reproducible Python script.
-- 🛡️ **Causal guardrails.** Plain-language questions flag *bad controls* (mediators and colliders) and exclude the invalid analyses.
-- 🙈 **Blind mode.** You build and lock your analysis plan (with a SHA-256 hash) *before* the real results are revealed.
-- 🎯 **Cherry-pick check.** Shows where a reported result sits among all valid analyses.
+- **No code.** The whole workflow is point-and-click, and it exports a reproducible Python script.
+- **Causal guardrails.** Three plain questions per variable flag *bad controls* (mediators, colliders) and bad subgroups, and exclude those analyses from the verdict.
+- **Blind mode.** You lock your analysis plan with a SHA-256 fingerprint *before* any result is shown, and anyone can verify it afterwards.
+- **Cherry-pick check.** Shows where a reported result sits among all fair analyses.
+- **Examples with a known answer.** Five simulated datasets (real effect, no effect, hidden common cause, mediator trap, collider trap) for learning and teaching.
 
-> Status: **in development** (v0.1.0.dev0). Screenshots will appear here.
+> Status: **in development** (v0.1.0.dev0).
 
 ## Install
 
@@ -33,6 +36,26 @@ python -m multiverse_studio
 
 Requires Python 3.10 or newer on Windows, Linux or macOS.
 
+## Using the app
+
+The sidebar walks you through seven steps. You can go back to any finished step at any time.
+
+| Step | What you do |
+|---|---|
+| 1. Your data | Load a CSV/Excel file, a saved analysis, or an example with a known answer. |
+| 2. Your question | Pick the outcome (Y) and the factor (X). The model is chosen for you. Blind mode is on by default. |
+| 3. Analysis choices | Tick the defensible options: extreme values, things to keep equal, who to include, missing answers. |
+| 4. Fair comparisons | Answer three Yes / No / Not sure questions per variable. Unfair ones are left out. |
+| 5. Run | Lock the plan, then every analysis runs in the background with a live preview. |
+| 6. Results | Verdict, cherry-pick check, the specification curve (click any dot), which choice matters most, ready-to-use text. |
+| 7. Save & share | Python script, JSON report, PDF, analysis file, and a check that the plan still matches its fingerprint. |
+
+Keyboard: `Ctrl+1` to `Ctrl+7` jump to a step, `Ctrl+Enter` goes to the next one, and `Alt+Left` goes back. A text-size setting (100 / 115 / 130%) helps on classroom projectors.
+
+| Analysis choices | Fair comparisons | Dark mode |
+|---|---|---|
+| ![Choices](docs/screenshots/choices.png) | ![Fair comparisons](docs/screenshots/fair-comparisons.png) | ![Dark mode](docs/screenshots/results-dark.png) |
+
 ## Quick start (script, no GUI)
 
 ```python
@@ -42,7 +65,7 @@ from multiverse_studio.io.loaders import load_table
 df = load_table("survey.csv")
 profile = api.profile_data(df)
 family = api.suggest_family(profile, "grade")
-decisions = api.suggest_decisions(profile, "grade", "sleep_hours")
+decisions = api.suggest_decisions(profile, "grade", "sleep_hours", df)
 specs = api.build_specs(decisions, max_specs=1000, seed=42)
 results = api.run_multiverse(df, "grade", "sleep_hours", family, decisions, specs)
 print(api.summarize(results).explanation)
@@ -51,12 +74,13 @@ print(api.summarize(results).explanation)
 ## Development
 
 ```bash
-pytest --cov            # tests + coverage
+pytest --cov            # tests + coverage (GUI test skips itself without a display)
 ruff check src tests    # lint
 ```
 
 - Architecture and ownership: [docs/architecture.md](docs/architecture.md)
-- Design decisions (verdict rule, seed, processing order): [docs/decisions.md](docs/decisions.md)
+- Design decisions (verdict rule, seed, processing order, guardrails): [docs/decisions.md](docs/decisions.md)
+- Product and design brief: [PRODUCT.md](PRODUCT.md), [DESIGN.md](DESIGN.md)
 - Novelty search and feature plan: [docs/planning/](docs/planning/)
 
 ## Cite
