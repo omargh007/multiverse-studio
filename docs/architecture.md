@@ -11,19 +11,19 @@
 
 ```mermaid
 flowchart TB
-    subgraph GUI["gui/ (CustomTkinter) - Owner B"]
+    subgraph GUI["gui/ (CustomTkinter)"]
         APP[app.py<br/>window + sidebar wizard]
         PAGES[pages/<br/>data, question, choices,<br/>guardrails, run, results, export]
         WORKER[worker.py<br/>thread + queue + after()]
         THEME[theme.py<br/>design tokens]
     end
 
-    subgraph PLOTS["plots/ (Matplotlib Figures) - Owner B"]
+    subgraph PLOTS["plots/ (Matplotlib Figures)"]
         SC[spec_curve.py]
         IMP[importance.py]
     end
 
-    subgraph CORE["core/ (no GUI) - Owner A"]
+    subgraph CORE["core/ (no GUI)"]
         API[api.py - public facade]
         TYPES[types.py - Session and contract]
         PROF[profiling.py]
@@ -41,7 +41,7 @@ flowchart TB
         SEED[seed.py]
     end
 
-    subgraph IO["io/ - Owners A and C"]
+    subgraph IO["io/"]
         LOAD[loaders.py]
         SCRIPT[export_script.py]
         JSON[export_json.py]
@@ -94,21 +94,12 @@ sequenceDiagram
     W->>UI: queue.put(("done", None))
 ```
 
-## Ownership (folder = owner, so agents don't collide)
-
-| Owner | Edits only | Must not edit |
-|---|---|---|
-| **A: Core** | `src/multiverse_studio/core/`, `io/loaders.py`, `io/export_script.py`, `tests/core/` | `gui/` |
-| **B: GUI** | `src/multiverse_studio/gui/`, `src/multiverse_studio/plots/`, `tests/plots/` | `core/` (ask A) |
-| **C: Release & evidence** | `io/export_json.py`, `io/export_pdf.py`, `io/session_store.py`, `tests/io/`, `.github/`, `pyproject.toml`, `docs/`, `examples/`, `paper/`, `README.md`, `CITATION.cff`, `CHANGELOG.md` | `core/`, `gui/` |
-
 ## Changing the contract
 `core/types.py` and the function signatures in `core/api.py` are shared. To change them:
-1. Open a small PR that touches **only** the contract.
-2. Tag both teammates and merge once they've approved.
-3. Then each person updates their own side.
+1. Make a small change that touches **only** the contract.
+2. Tell the team before merging it.
+3. Then update the code that uses it.
 
 ## Git workflow
-- `main` is protected. Work on branches named `a/...`, `b/...` or `c/...`, and merge via pull request once CI is green.
-- Pull before every agent session and commit small changes often **from your own account**, because Git history is graded.
-- Start each agent session with: *"Read docs/architecture.md and docs/decisions.md. I am owner X. Only edit my folders."*
+- Pull before you start working, and commit small changes often.
+- Keep CI green: run `ruff check src tests` and `pytest --cov` before pushing.
