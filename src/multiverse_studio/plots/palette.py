@@ -74,3 +74,6 @@ MARKER_SIZE_PT = 6.0  # ~8 px at 100 dpi
 LINE_WIDTH = 1.5  # ~2 px
 CI_LINE_WIDTH = 1.0
 GRID_LINE_WIDTH = 0.6
+
+# Same family as the UI (system font); Matplotlib falls back silently in order.
+FONT_FAMILY = ["Segoe UI", "Helvetica Neue", "DejaVu Sans", "sans-serif"]
