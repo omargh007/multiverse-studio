@@ -15,16 +15,14 @@ The novel features:
 The full brief from the instructor is in the course document. The requirements that matter are summarised below.
 
 ## Hard rules
-1. **Never commit, push or amend.** Team members make every commit themselves from their own GitHub accounts, because Git history is graded per person. When work is ready, tell the user and suggest plain commit messages.
-2. **No AI attribution anywhere.** No "Co-Authored-By: Claude", no "Generated with Claude", no mention of AI in commits, code comments or docs.
-3. **Core never imports the GUI.** `core/`, `io/` and `plots/` must not import `tkinter`, `customtkinter` or `gui`. A test enforces this.
-4. **The GUI only calls `multiverse_studio.core.api`.** Put analysis logic in `core/`, not in GUI callbacks.
-5. **Long work runs off the main thread.** Use `gui/worker.py` (thread + queue + `after()` polling). Never touch Tk widgets from a worker thread.
-6. **One seed.** Any random step uses `core.seed.rng_for(seed, purpose)`. See `docs/decisions.md`, D-3.
-7. **Don't change the contract casually.** Changes to `core/types.py` or the signatures in `core/api.py` affect everyone. Explain the change and get the team to agree first.
-8. **Stay in your folder** (see Ownership) unless the task needs otherwise. Say so when you cross into someone else's.
-9. **Keep scope locked:** linear, logistic and Poisson models only. No new statistical families unless the team agrees.
-10. **Update `docs/STATUS.md`** when a task is finished or started, and `CHANGELOG.md` for user-visible changes.
+1. **No AI attribution anywhere.** No "Co-Authored-By: Claude", no "Generated with Claude", no mention of AI in commits, code comments or docs.
+2. **Core never imports the GUI.** `core/`, `io/` and `plots/` must not import `tkinter`, `customtkinter` or `gui`. A test enforces this.
+3. **The GUI only calls `multiverse_studio.core.api`.** Put analysis logic in `core/`, not in GUI callbacks.
+4. **Long work runs off the main thread.** Use `gui/worker.py` (thread + queue + `after()` polling). Never touch Tk widgets from a worker thread.
+5. **One seed.** Any random step uses `core.seed.rng_for(seed, purpose)`. See `docs/decisions.md`, D-3.
+6. **Don't change the contract casually.** Changes to `core/types.py` or the signatures in `core/api.py` affect everyone. Explain the change and get the team to agree first.
+7. **Keep scope locked:** linear, logistic and Poisson models only. No new statistical families unless the team agrees.
+8. **Update `docs/STATUS.md`** when a task is finished or started, and `CHANGELOG.md` for user-visible changes.
 
 ## Before saying something is done
 ```bash
@@ -57,7 +55,7 @@ To try the app quickly, use the sidebar → **Examples with a known answer** →
 | `src/multiverse_studio/plots/` | Matplotlib figures (spec curve, importance) + validated chart palette |
 | `src/multiverse_studio/gui/` | CustomTkinter app: `app.py` (window, navigation, state), `pages/` (one per wizard step), `widgets/`, `theme.py` (design tokens), `worker.py` |
 | `tests/` | pytest: `core/`, `io/`, `plots/`, `gui/` (GUI test skips without a display) |
-| `docs/architecture.md` | layers, workflow, threading, ownership |
+| `docs/architecture.md` | layers, workflow, threading |
 | `docs/decisions.md` | verdict rule (D-2), seed (D-3), processing order (D-4), limits (D-5), guardrails (D-6), datasets (D-7) |
 | `docs/planning/` | novelty search and feature plan |
 | `PRODUCT.md`, `DESIGN.md` | who it's for, voice, design principles, colours, type, components |
@@ -72,15 +70,6 @@ To try the app quickly, use the sidebar → **Examples with a known answer** →
 - No coloured side-stripe borders, no gradients, no glassmorphism, no nested cards.
 - Every new screen needs its empty, loading, error and too-much-data states.
 - Read `PRODUCT.md` and `DESIGN.md` before UI work.
-
-## Ownership (folder = owner, so parallel agents don't collide)
-| Role | Folders |
-|---|---|
-| **A: Core** | `core/`, `io/loaders.py`, `io/export_script.py`, `tests/core/` |
-| **B: GUI** | `gui/`, `plots/`, `tests/gui/`, `tests/plots/` |
-| **C: Release & evidence** | `io/export_json.py`, `io/export_pdf.py`, `io/session_store.py`, `tests/io/`, `.github/`, `pyproject.toml`, `docs/`, `examples/`, `paper/`, `README.md`, `CITATION.cff`, `CHANGELOG.md` |
-
-Who holds which role, and the open tasks, are in **[docs/STATUS.md](docs/STATUS.md)**.
 
 ## Grading reminders (from the brief)
 Design and code quality 20, testing / CI / packaging 15, novelty 10, GUI usability 10, reproducibility 10, case studies 10, impact evidence 10, paper 10, demo 5.

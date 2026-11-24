@@ -79,8 +79,8 @@ ruff check src tests    # lint
 ```
 
 - Project status and open tasks: [docs/STATUS.md](docs/STATUS.md)
-- Team and contributor rules: [CLAUDE.md](CLAUDE.md)
-- Architecture and ownership: [docs/architecture.md](docs/architecture.md)
+- Contributor rules: [CLAUDE.md](CLAUDE.md)
+- Architecture: [docs/architecture.md](docs/architecture.md)
 - Design decisions (verdict rule, seed, processing order, guardrails): [docs/decisions.md](docs/decisions.md)
 - Product and design brief: [PRODUCT.md](PRODUCT.md), [DESIGN.md](DESIGN.md)
 - Novelty search and feature plan: [docs/planning/](docs/planning/)
