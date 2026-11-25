@@ -2,13 +2,13 @@
 
 **Does your finding survive every reasonable way of analysing it? Find out without writing code.**
 
-Multiverse Studio is a free, offline desktop app for **multiverse / specification-curve analysis**, built for researchers, analysts, reviewers and students who don't program. You load a CSV or Excel file, pick your question (does X affect Y?), and tick the analysis choices a careful researcher could defend. The app runs every combination and shows whether your result is **consistent** or **fragile**.
+Multiverse Studio is a free app that runs entirely on your computer, for **multiverse / specification-curve analysis**, built for researchers, analysts, reviewers and students who don't program. You load a CSV or Excel file, pick your question (does X affect Y?), and tick the analysis choices a careful researcher could defend. The app runs every combination and shows whether your result is **consistent** or **fragile**.
 
 ![Results page](docs/screenshots/results.png)
 
 What makes it different from existing tools such as specr, RobustiPy and Boba:
 
-- **No code.** The whole workflow is point-and-click, and it exports a reproducible Python script.
+- **No code.** The whole workflow is point-and-click in a local browser page, and it exports a reproducible Python script.
 - **Causal guardrails.** Three plain questions per variable flag *bad controls* (mediators, colliders) and bad subgroups, and exclude those analyses from the verdict.
 - **Blind mode.** You lock your analysis plan with a SHA-256 fingerprint *before* any result is shown, and anyone can verify it afterwards.
 - **Cherry-pick check.** Shows where a reported result sits among all fair analyses.
@@ -20,7 +20,7 @@ What makes it different from existing tools such as specr, RobustiPy and Boba:
 
 ```bash
 pip install multiverse-studio        # after the first PyPI release
-multiverse-studio                    # start the app
+multiverse-studio                    # starts the app and opens it in your browser
 ```
 
 From source:
@@ -34,27 +34,27 @@ pip install -e ".[dev]"
 python -m multiverse_studio
 ```
 
-Requires Python 3.10 or newer on Windows, Linux or macOS.
+Requires Python 3.10 or newer on Windows, Linux or macOS. The app runs on a local server at `http://localhost:8501`, reachable only from your own computer, so your data never leaves it. Close the terminal window (or press `Ctrl+C`) to stop it.
 
 ## Using the app
 
-The sidebar walks you through seven steps. You can go back to any finished step at any time.
+One page, two columns. On the left is **the plan**: four blocks that unlock in order, each folding into a one-line summary you can reopen with **Edit**. On the right is **the evidence**: your data before a run, live progress during it, then the results.
 
-| Step | What you do |
+| Plan block | What you do |
 |---|---|
 | 1. Your data | Load a CSV/Excel file, a saved analysis, or an example with a known answer. |
 | 2. Your question | Pick the outcome (Y) and the factor (X). The model is chosen for you. Blind mode is on by default. |
 | 3. Analysis choices | Tick the defensible options: extreme values, things to keep equal, who to include, missing answers. |
 | 4. Fair comparisons | Answer three Yes / No / Not sure questions per variable. Unfair ones are left out. |
-| 5. Run | Lock the plan, then every analysis runs in the background with a live preview. |
-| 6. Results | Verdict, cherry-pick check, the specification curve (click any dot), which choice matters most, ready-to-use text. |
-| 7. Save & share | Python script, JSON report, PDF, analysis file, and a check that the plan still matches its fingerprint. |
+| Run | Lock the plan, then every analysis runs in the background with a live preview. |
 
-Keyboard: `Ctrl+1` to `Ctrl+7` jump to a step, `Ctrl+Enter` goes to the next one, and `Alt+Left` goes back. A text-size setting (100 / 115 / 130%) helps on classroom projectors.
+The results show the verdict in one plain sentence, the specification curve (click any dot to see that analysis and its code), which choice matters most, the cherry-pick check, ready-to-use methods and results text, and **Save & share**: the Python script, the JSON report, the analysis file and a check that the plan still matches its fingerprint.
 
-| Analysis choices | Fair comparisons | Dark mode |
+Light and dark mode: the ⋮ menu at the top right → Settings. A **Display** button sets the text size (100 / 115 / 130%) for classroom projectors.
+
+| Fair comparisons | Running | Dark mode |
 |---|---|---|
-| ![Choices](docs/screenshots/choices.png) | ![Fair comparisons](docs/screenshots/fair-comparisons.png) | ![Dark mode](docs/screenshots/results-dark.png) |
+| ![Fair comparisons](docs/screenshots/fair-comparisons.png) | ![Running](docs/screenshots/run.png) | ![Dark mode](docs/screenshots/results-dark.png) |
 
 ## Quick start (script, no GUI)
 

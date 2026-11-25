@@ -54,3 +54,11 @@ The simulator checks this end to end (seed 1, n = 300, collider scenario, true e
 - Fertility and religiosity (Durante et al., 2013; re-analysed by Steegen et al., 2016)
 
 Check redistribution rights before adding the files to `examples/data/`. If redistribution isn't allowed, download the data at runtime instead.
+
+## D-8: Interface framework (Streamlit)
+The interface was rebuilt with **Streamlit** instead of CustomTkinter (November 2026).
+
+- **Why:** a browser page gives an interactive chart (hover, click a dot), easier layout of plan and evidence side by side, and no Tcl/Tk install problems on Windows.
+- **Privacy kept:** the launcher binds the server to `localhost` only and turns off usage statistics, so the app stays offline and data never leaves the computer.
+- **Structure kept:** `core/`, `io/` and `plots/` are unchanged. The GUI still only calls `core.api`, and long runs still go to a worker thread (`gui/jobs.py`), polled by the page on a timer.
+- **Brief:** the course brief asks for Tkinter / ttk / CustomTkinter with `FigureCanvasTkAgg`. The instructor approved Streamlit instead on 25 November 2026. The CustomTkinter interface remains in the Git history before this change.

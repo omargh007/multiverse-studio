@@ -5,13 +5,13 @@ build-backend = "hatchling.build"
 [project]
 name = "multiverse-studio"
 version = "0.1.0.dev0"
-description = "A no-code desktop workbench for multiverse / specification-curve analysis with causal guardrails, blind mode and cherry-pick checks."
+description = "A no-code, offline workbench for multiverse / specification-curve analysis with causal guardrails, blind mode and cherry-pick checks."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [{ name = "Multiverse Studio Team" }]
-keywords = ["multiverse analysis", "specification curve", "robustness", "reproducibility", "statistics", "gui"]
+keywords = ["multiverse analysis", "specification curve", "robustness", "reproducibility", "statistics", "gui", "streamlit"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
@@ -31,7 +31,8 @@ dependencies = [
     "pandas>=2.0",
     "statsmodels>=0.14",
     "matplotlib>=3.7",
-    "customtkinter>=5.2",
+    "streamlit>=1.50",
+    "altair>=5.0",
     "openpyxl>=3.1",
 ]
 
@@ -59,7 +60,7 @@ addopts = "-ra"
 
 [tool.coverage.run]
 source = ["multiverse_studio"]
-omit = ["*/gui/*", "*/__main__.py"]
+omit = ["*/gui/app.py", "*/gui/launch.py", "*/__main__.py"]
 
 [tool.ruff]
 line-length = 100
@@ -70,4 +71,5 @@ select = ["E", "F", "W", "I", "UP", "B"]
 
 [tool.ruff.lint.per-file-ignores]
 # UI copy: keep each user-facing sentence on one line so it's easy to edit.
-"src/multiverse_studio/gui/pages/*" = ["E501"]
+"src/multiverse_studio/gui/app.py" = ["E501"]
+"src/multiverse_studio/gui/theme.py" = ["E501"]

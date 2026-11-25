@@ -4,18 +4,20 @@
 1. **Core never imports the GUI.** `core/`, `io/` and `plots/` work in scripts and tests with no display. A test (`tests/core/test_no_gui_imports.py`) enforces this.
 2. **One shared state.** The `Session` dataclass (`core/types.py`) holds everything about an analysis. Every GUI page reads and writes it, and every export starts from it.
 3. **The GUI only calls `core.api`.** The GUI contains no analysis logic.
-4. **Long work runs off the main thread.** The core runner reports through callbacks, and the GUI forwards them to a queue that it polls with `after()`.
+4. **Long work runs off the main thread.** The core runner reports through callbacks; `gui/jobs.py` runs it in a worker thread that puts messages on a queue, and the Streamlit page polls that queue with a fragment on a timer (`st.fragment(run_every=...)`).
 5. **One seed, one purpose per random step** (`core/seed.py`, decision D-3).
 
 ## Layers
 
 ```mermaid
 flowchart TB
-    subgraph GUI["gui/ (CustomTkinter)"]
-        APP[app.py<br/>window + sidebar wizard]
-        PAGES[pages/<br/>data, question, choices,<br/>guardrails, run, results, export]
-        WORKER[worker.py<br/>thread + queue + after()]
-        THEME[theme.py<br/>design tokens]
+    subgraph GUI["gui/ (Streamlit, runs on localhost)"]
+        APP[app.py<br/>workbench page: plan beside evidence]
+        STATE[state.py<br/>Workbench controller, no Streamlit]
+        WORKER[jobs.py<br/>thread + queue, polled by a fragment]
+        CHARTS[charts.py<br/>interactive Altair curve]
+        THEME[theme.py<br/>design tokens + Streamlit theme]
+        LAUNCH[launch.py<br/>starts the local server]
     end
 
     subgraph PLOTS["plots/ (Matplotlib Figures)"]
@@ -49,10 +51,10 @@ flowchart TB
         STORE[session_store.py]
     end
 
-    PAGES --> API
-    PAGES --> WORKER
-    PAGES --> SC & IMP
-    PAGES --> LOAD & SCRIPT & JSON & PDF & STORE
+    APP --> STATE & CHARTS & THEME
+    STATE --> API
+    STATE --> WORKER
+    STATE --> LOAD & SCRIPT & JSON & STORE
     WORKER --> API
     API --> PROF & CH & SPECS & RUN & INF & GR & BL & CP & IM & SIM & NAR
     RUN --> MOD
@@ -62,37 +64,45 @@ flowchart TB
     PDF --> SC & IMP
 ```
 
-## User workflow (wizard steps)
+## User workflow (one page: plan beside evidence)
 
-| Step | Page | Core calls | Writes to `Session` |
+The left column is the plan, four blocks that unlock in order. Each finished block folds into a one-line summary with an **Edit** button. The right column is the evidence: the data overview before a run, live progress during it, then the results.
+
+| Plan block | Controller methods (`gui/state.py`) | Core calls | Writes to `Session` |
 |---|---|---|---|
-| 1. Data | `pages/data.py` | `load_table`, `profile_data` | `data_path`, `profile` |
-| 2. Question | `pages/question.py` | `suggest_family` | `y`, `x`, `family` |
-| 3. Choices | `pages/choices.py` | `suggest_decisions`, `count_specs` | `decisions`, `max_specs` |
-| 4. Guardrails | `pages/guardrails.py` | `assess_controls` | `guardrails`, `assessments` |
-| 5. Run | `pages/run.py` | (blind) `blind_view`, `lock_plan` → `build_specs`, `iter_multiverse`, `mark_validity`, `permutation_test`, `summarize` | `blind`, `specs`, `results`, `verdict` |
-| 6. Results | `pages/results.py` | `decision_importance`, `cherry_pick_check`, plots | `reported_estimate`, `cherry_pick` |
-| 7. Export | `pages/export.py` | `export_script`, `export_json`, `export_pdf`, `methods_paragraph`, `results_paragraph`, `save_session` | none |
+| 1. Your data | `load_upload`, `load_example`, `load_session_file` | `load_table`, `profile_data`, `simulate` | `data_path`, `profile` |
+| 2. Your question | `set_question`, `set_blind` | `validate_question`, `suggest_family` | `y`, `x`, `family` |
+| 3. Analysis choices | `ensure_suggestions`, `set_ticked`, `set_limit`, `confirm_choices` | `suggest_decisions`, `count_specs` | `decisions`, `max_specs` |
+| 4. Fair comparisons | `set_answer`, `confirm_fairness` | `assess_controls`, `variables_to_assess` | `guardrails`, `assessments` |
+| Run | `set_run_options`, `start_run`, `poll`, `cancel` | `lock_plan`, `build_specs`, `iter_multiverse`, `mark_validity`, `permutation_test`, `summarize` | `blind`, `specs`, `results`, `verdict` |
+| Results (right column) | `check_cherry`, `importance`, `single_code` | `cherry_pick_check`, `decision_importance`, `methods_paragraph`, `results_paragraph` | `reported_estimate`, `cherry_pick` |
+| Save & share | `script_text`, `report_text`, `session_text`, `plan_matches` | `render_script`, `report_dict`, `session_to_dict`, `verify_plan` | none |
 
-**Teaching mode** (sidebar button) calls `simulate(scenario)` and opens the result at step 2, so students can watch a known truth appear or disappear.
+`app.py` only draws and wires widgets to these methods (through `on_change` callbacks). Because `Workbench` has no Streamlit import, the whole workflow is tested with plain pytest (`tests/gui/test_state.py`); `tests/gui/test_app.py` also drives the real page headlessly with Streamlit's `AppTest`.
 
-## Threading (step 5)
+**Examples with a known answer** (step 1) call `simulate(scenario)`, so students can watch a known truth appear or disappear.
+
+## Threading (Run)
 
 ```mermaid
 sequenceDiagram
-    participant UI as Run page (main thread)
-    participant W as Worker thread
+    participant UI as Streamlit page (script thread)
+    participant W as Worker thread (jobs.RunJob)
     participant C as core.runner
-    UI->>W: start(iter_multiverse, cancel_event)
+    UI->>W: start(run_task, cancel_event)
     loop each universe
         W->>C: fit_one(...)
         C-->>W: SpecResult
-        W->>UI: queue.put(("result", r))
+        W->>W: queue.put(("result", r))
     end
-    UI->>UI: after(50ms) poll queue → update progress bar + live curve
+    UI->>UI: fragment every 0.75 s: Workbench.poll() drains the queue, redraws progress + live curve
     UI-->>W: cancel_event.set() (Cancel button)
-    W->>UI: queue.put(("done", None))
+    W->>W: queue.put(("done", None))
+    UI->>UI: st.rerun(): results replace the progress view
 ```
+
+## Running it
+`multiverse-studio` (or `python -m multiverse_studio`) calls `gui/launch.py`, which starts Streamlit's server on **localhost only**, turns off usage statistics, applies the design tokens as Streamlit's light and dark themes, and opens the browser. Data never leaves the computer.
 
 ## Changing the contract
 `core/types.py` and the function signatures in `core/api.py` are shared. To change them:
