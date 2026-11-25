@@ -7,7 +7,7 @@ from pathlib import Path
 
 import multiverse_studio
 
-FORBIDDEN = {"tkinter", "customtkinter", "multiverse_studio.gui"}
+FORBIDDEN = {"tkinter", "customtkinter", "streamlit", "altair", "multiverse_studio.gui"}
 PKG = Path(multiverse_studio.__file__).parent
 
 

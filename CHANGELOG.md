@@ -3,6 +3,18 @@
 All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+
+## [Unreleased]
+### Changed
+- **The interface is now a Streamlit app** served on localhost only, replacing the CustomTkinter desktop window (decision D-8). Start it the same way: `multiverse-studio` or `python -m multiverse_studio`; it opens in the browser.
+- New layout, "plan beside evidence": the plan (data, question, choices, fair comparisons) sits in a left column and folds into one-line summaries; the evidence (progress, verdict, specification curve, what matters most, cherry-pick check, ready-to-use text, Save & share) sits on the right, so a changed choice and its effect are one glance apart.
+- The specification curve is interactive (Altair): hover for details, click a dot to see that analysis and copy its code.
+- Exports are browser downloads (script, JSON report, analysis file).
+### Added
+- `gui/state.py`: a `Workbench` controller with no Streamlit import, so the whole interface workflow is unit-tested; `tests/gui/test_app.py` drives the real page with Streamlit's `AppTest`.
+### Removed
+- CustomTkinter, the Tk worker and the seven wizard pages. Tcl/Tk is no longer needed.
+
 ## [Unreleased]
 ### Added
 - Project skeleton: package layout, core API contract, CI on Windows and Linux (coverage gate 70%), MIT license, CITATION.cff.

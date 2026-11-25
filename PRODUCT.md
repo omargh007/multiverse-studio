@@ -36,12 +36,12 @@ The voice is that of a careful senior colleague: plain words first, the technica
 1. **Evidence before verdict.** Show what was run and why before showing the conclusion. The verdict is a summary of visible numbers, never a black box.
 2. **Plain words, precise terms.** Every concept gets a plain-language label first and the standard statistical term second, so experts and beginners both trust it.
 3. **Honest by construction.** The interface makes the honest path the easy path: blind mode, guardrails, and showing left-out analyses rather than hiding them.
-4. **One task per screen.** The wizard keeps each step focused. Nothing appears before the user needs it, and every step can be revisited.
+4. **One task at a time, the whole plan in view.** The plan blocks unlock in order and fold into one-line summaries; nothing appears before the user needs it, every block can be reopened, and the evidence stays beside the plan.
 5. **Professional calm.** Restrained colour, familiar controls, no decoration. Colour only ever means something (significance, state, selection).
 
 ## Accessibility & Inclusion
 - WCAG 2.2 AA contrast for all text and UI components, in light and dark mode.
 - Colour-blind safe: meaning is never carried by colour alone. Significance also appears in legends and text, and left-out analyses use hollow markers.
-- Full keyboard operation: Tab order follows the wizard, Enter activates the primary action, Ctrl+1 to Ctrl+7 jump between steps.
+- Full keyboard operation: Tab order follows the plan from top to bottom, then the evidence; every control is a native button, input or switch.
 - Projector and large-text mode: a text-size setting (100 / 115 / 130%) for classrooms and low vision.
 - Minimal motion: only state changes (progress, step change). No decorative animation.

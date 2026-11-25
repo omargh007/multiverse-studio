@@ -5,7 +5,7 @@ Instructions for Claude (and humans) working in this repo. Read this first, then
 ## What this project is
 A university final project (Python for Data Science, Fall 2026, 3 students). The presentation to the instructor is due around **7 December 2026**. A SoftwareX submission is optional.
 
-**Multiverse Studio** is an offline CustomTkinter desktop app for non-programmers. It runs every defensible combination of analysis choices (a multiverse / specification-curve analysis) and says whether an "X affects Y" finding is consistent or fragile.
+**Multiverse Studio** is an offline app for non-programmers, built with Streamlit and served on localhost only (see `docs/decisions.md`, D-8). It runs every defensible combination of analysis choices (a multiverse / specification-curve analysis) and says whether an "X affects Y" finding is consistent or fragile.
 
 The novel features:
 - **Causal guardrails:** excludes bad controls and bad subsets.
@@ -16,9 +16,9 @@ The full brief from the instructor is in the course document. The requirements t
 
 ## Hard rules
 1. **No AI attribution anywhere.** No "Co-Authored-By: Claude", no "Generated with Claude", no mention of AI in commits, code comments or docs.
-2. **Core never imports the GUI.** `core/`, `io/` and `plots/` must not import `tkinter`, `customtkinter` or `gui`. A test enforces this.
-3. **The GUI only calls `multiverse_studio.core.api`.** Put analysis logic in `core/`, not in GUI callbacks.
-4. **Long work runs off the main thread.** Use `gui/worker.py` (thread + queue + `after()` polling). Never touch Tk widgets from a worker thread.
+2. **Core never imports the GUI.** `core/`, `io/` and `plots/` must not import `streamlit`, `altair` or `gui`. A test enforces this.
+3. **The GUI only calls `multiverse_studio.core.api`.** Put analysis logic in `core/`, and interface state changes in `gui/state.py` (no Streamlit import there). `gui/app.py` only draws.
+4. **Long work runs off the main thread.** Use `gui/jobs.py` (thread + queue); the page polls it with a timed `st.fragment`. Never call Streamlit from the worker thread.
 5. **One seed.** Any random step uses `core.seed.rng_for(seed, purpose)`. See `docs/decisions.md`, D-3.
 6. **Don't change the contract casually.** Changes to `core/types.py` or the signatures in `core/api.py` affect everyone. Explain the change and get the team to agree first.
 7. **Keep scope locked:** linear, logistic and Poisson models only. No new statistical families unless the team agrees.
@@ -43,9 +43,9 @@ python -m venv .venv
 .venv\Scripts\activate            # Linux/macOS: source .venv/bin/activate
 pip install -e ".[dev]"
 pytest -q                         # everything should pass
-python -m multiverse_studio       # opens the app
+python -m multiverse_studio       # starts the app on localhost and opens the browser
 ```
-To try the app quickly, use the sidebar → **Examples with a known answer** → **Mediator trap**. Choose grade ← sleep_hours, then click through to the results.
+To try the app quickly, pick **Collider trap** under *Or try an example with a known answer*, choose grade and sleep_hours, keep the choices, answer the three questions for `scholarship` (No, Yes, Yes) and run.
 
 ## Map of the code
 | Path | What |
@@ -53,8 +53,8 @@ To try the app quickly, use the sidebar → **Examples with a known answer** →
 | `src/multiverse_studio/core/` | analysis engine: `api.py` (public facade), `types.py` (the shared contract, `Session` = shared state), profiling, choices, specs, models (statsmodels), runner, inference (verdict + permutation test), guardrails, blind, cherry, importance, simulate, narrative, serialize |
 | `src/multiverse_studio/io/` | load CSV/Excel, export script, JSON report, session save/load, PDF (**not built yet**) |
 | `src/multiverse_studio/plots/` | Matplotlib figures (spec curve, importance) + validated chart palette |
-| `src/multiverse_studio/gui/` | CustomTkinter app: `app.py` (window, navigation, state), `pages/` (one per wizard step), `widgets/`, `theme.py` (design tokens), `worker.py` |
-| `tests/` | pytest: `core/`, `io/`, `plots/`, `gui/` (GUI test skips without a display) |
+| `src/multiverse_studio/gui/` | Streamlit app: `app.py` (the page: plan beside evidence), `state.py` (`Workbench` controller, no Streamlit), `jobs.py` (background run), `charts.py` (interactive Altair curve), `theme.py` (design tokens + Streamlit theme), `launch.py` (local server) |
+| `tests/` | pytest: `core/`, `io/`, `plots/`, `gui/` (controller, charts, job, and the page itself via Streamlit `AppTest`; no display needed) |
 | `docs/architecture.md` | layers, workflow, threading |
 | `docs/decisions.md` | verdict rule (D-2), seed (D-3), processing order (D-4), limits (D-5), guardrails (D-6), datasets (D-7) |
 | `docs/planning/` | novelty search and feature plan |
