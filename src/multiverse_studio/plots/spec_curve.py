@@ -21,7 +21,7 @@ from collections.abc import Sequence
 import numpy as np
 from matplotlib.figure import Figure
 
-from ..core.types import Decision, SpecResult
+from ..core.types import Decision, DecisionKind, Option, SpecResult
 from .palette import (
     CI_LINE_WIDTH,
     FONT_FAMILY,
@@ -53,6 +53,14 @@ MAX_LABEL = 30
 def short(label: str, limit: int = MAX_LABEL) -> str:
     """Trim long option labels so they never get clipped at the left edge."""
     return label if len(label) <= limit else label[: limit - 1].rstrip(" +,") + "…"
+
+
+def _option_label(d: Decision, option: Option) -> str:
+    """Control sets grow one variable at a time, so long ones name the newest one."""
+    cols = option.params.get("columns", [])
+    if d.kind is DecisionKind.CONTROLS and len(cols) > 1 and len(option.label) > MAX_LABEL:
+        return f"{len(cols)} variables, adds {cols[-1]}"
+    return option.label
 
 
 def _style_axis(ax, pal) -> None:
@@ -90,7 +98,7 @@ def spec_curve_figure(
             if len(d.options) < 2:
                 continue
             rows.append((d.label, None, d.id))
-            rows += [(o.label, o.id, d.id) for o in d.options]
+            rows += [(_option_label(d, o), o.id, d.id) for o in d.options]
 
     if indicators and rows:
         gs = fig.add_gridspec(

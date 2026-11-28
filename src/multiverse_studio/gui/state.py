@@ -31,6 +31,7 @@ from ..core.types import (
     SpecResult,
 )
 from ..io.export_json import report_dict
+from ..io.export_pdf import render_pdf
 from ..io.export_script import render_script
 from ..io.loaders import SUPPORTED, DataLoadError, load_table
 from .jobs import RunJob
@@ -524,6 +525,9 @@ class Workbench:
 
     def session_text(self) -> str:
         return json.dumps(session_to_dict(self.session), indent=2)
+
+    def pdf_bytes(self) -> bytes:
+        return render_pdf(self.session)
 
     def plan_matches(self) -> bool | None:
         s = self.session

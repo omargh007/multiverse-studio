@@ -21,7 +21,15 @@ from ..core import api
 from ..core.serialize import session_to_dict
 from ..core.types import Session
 
-PACKAGES = ("multiverse-studio", "numpy", "pandas", "statsmodels", "matplotlib", "customtkinter")
+PACKAGES = (
+    "multiverse-studio",
+    "numpy",
+    "pandas",
+    "statsmodels",
+    "matplotlib",
+    "streamlit",
+    "altair",
+)
 
 
 def environment_info() -> dict[str, Any]:

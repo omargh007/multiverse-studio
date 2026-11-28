@@ -11,7 +11,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 - The specification curve is interactive (Altair): hover for details, click a dot to see that analysis and copy its code.
 - Exports are browser downloads (script, JSON report, analysis file).
 ### Added
+- PDF report under **Save & share**: verdict with every number explained, specification curve, decision importance, fairness answers, cherry-pick check, methods and results text, plan fingerprint and software versions.
 - `gui/state.py`: a `Workbench` controller with no Streamlit import, so the whole interface workflow is unit-tested; `tests/gui/test_app.py` drives the real page with Streamlit's `AppTest`.
+### Fixed
+- The environment record in exports now lists the Streamlit and Altair versions (it still listed CustomTkinter).
+
 ### Removed
 - CustomTkinter, the Tk worker and the seven wizard pages. Tcl/Tk is no longer needed.
 
