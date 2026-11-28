@@ -36,6 +36,7 @@ from multiverse_studio.gui.state import (
     Workbench,
 )
 from multiverse_studio.gui.theme import BLOCKS, TEXT_SIZES, css, tokens
+from multiverse_studio.io.wording import ROLE_WORDS, UNIT_WORDS, VERDICT_WORDS
 from multiverse_studio.plots.palette import palette
 
 # ------------------------------------------------------------------- icons (inline SVG)
@@ -78,18 +79,13 @@ SOFT = {
     "info": "accent_soft",
 }
 INK = {"good": "good", "warning": "warning", "critical": "critical", "info": "accent"}
-VERDICT_WORDS = {
-    "consistent": ("good", "Consistent", "it holds up across reasonable analyses"),
-    "mixed": ("warning", "Depends on choices", "the answer changes with the analysis"),
-    "fragile": ("critical", "Fragile", "it does not hold up across reasonable analyses"),
-}
 ROLE_CHIP = {
-    CausalRole.CONFOUNDER: ("good", "Fair to keep equal"),
-    CausalRole.NEUTRAL: ("good", "Fair to keep equal"),
-    CausalRole.UNKNOWN: ("warning", "Kept, but flagged"),
-    CausalRole.MEDIATOR: ("critical", "Unfair: left out"),
-    CausalRole.COLLIDER: ("critical", "Unfair: left out"),
-    CausalRole.OUTCOME_PROXY: ("critical", "Unfair: left out"),
+    CausalRole.CONFOUNDER: ("good", ROLE_WORDS["confounder"]),
+    CausalRole.NEUTRAL: ("good", ROLE_WORDS["neutral"]),
+    CausalRole.UNKNOWN: ("warning", ROLE_WORDS["unknown"]),
+    CausalRole.MEDIATOR: ("critical", ROLE_WORDS["mediator"]),
+    CausalRole.COLLIDER: ("critical", ROLE_WORDS["collider"]),
+    CausalRole.OUTCOME_PROXY: ("critical", ROLE_WORDS["outcome_proxy"]),
 }
 KIND_NAMES = {
     ColumnKind.NUMERIC: "Number",
@@ -111,11 +107,6 @@ LOCKED_EDIT_WARNING = (
     "Changing anything here clears the results and records, in every export, that the "
     "locked plan was changed after the results were seen."
 )
-UNIT_WORDS = {
-    "linear": "points of {y} for each one-unit increase in {x}",
-    "logistic": "change in the log-odds of {y} for each one-unit increase in {x}",
-    "poisson": "change in the log count of {y} for each one-unit increase in {x}",
-}
 
 
 # ----------------------------------------------------------------------- helpers
@@ -1012,6 +1003,14 @@ def save_and_share(wb: Workbench) -> None:
                 "application/json",
                 "secondary",
             ),
+            (
+                "PDF report",
+                "The verdict, charts, fairness answers, text and plan fingerprint, ready to print.",
+                wb.pdf_bytes,
+                f"{stem}.pdf",
+                "application/pdf",
+                "secondary",
+            ),
         ]
         for title, desc, make, name, mime, kind in items:
             with st.container(horizontal=True, vertical_alignment="center"):
@@ -1028,18 +1027,6 @@ def save_and_share(wb: Workbench) -> None:
                     key=f"dl_{name}",
                     on_click="ignore",
                 )
-        with st.container(horizontal=True, vertical_alignment="center"):
-            st.html(
-                '<div><b>PDF report</b><div class="ms-muted">Not available yet. Use the script or the '
-                "JSON report for now.</div></div>",
-                width="stretch",
-            )
-            st.button(
-                "Save .pdf",
-                disabled=True,
-                key="dl_pdf",
-                help="PDF export is planned for the next version.",
-            )
         st.divider()
         ok = wb.plan_matches()
         if ok is None:

@@ -51,7 +51,7 @@ To try the app quickly, pick **Collider trap** under *Or try an example with a k
 | Path | What |
 |---|---|
 | `src/multiverse_studio/core/` | analysis engine: `api.py` (public facade), `types.py` (the shared contract, `Session` = shared state), profiling, choices, specs, models (statsmodels), runner, inference (verdict + permutation test), guardrails, blind, cherry, importance, simulate, narrative, serialize |
-| `src/multiverse_studio/io/` | load CSV/Excel, export script, JSON report, session save/load, PDF (**not built yet**) |
+| `src/multiverse_studio/io/` | load CSV/Excel, export script, JSON report, session save/load, PDF report; `wording.py` holds the plain words shared with the app |
 | `src/multiverse_studio/plots/` | Matplotlib figures (spec curve, importance) + validated chart palette |
 | `src/multiverse_studio/gui/` | Streamlit app: `app.py` (the page: plan beside evidence), `state.py` (`Workbench` controller, no Streamlit), `jobs.py` (background run), `charts.py` (interactive Altair curve), `theme.py` (design tokens + Streamlit theme), `launch.py` (local server) |
 | `tests/` | pytest: `core/`, `io/`, `plots/`, `gui/` (controller, charts, job, and the page itself via Streamlit `AppTest`; no display needed) |

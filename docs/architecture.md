@@ -49,12 +49,14 @@ flowchart TB
         JSON[export_json.py]
         PDF[export_pdf.py]
         STORE[session_store.py]
+        WORDS[wording.py]
     end
 
     APP --> STATE & CHARTS & THEME
+    APP & PDF --> WORDS
     STATE --> API
     STATE --> WORKER
-    STATE --> LOAD & SCRIPT & JSON & STORE
+    STATE --> LOAD & SCRIPT & JSON & PDF & STORE
     WORKER --> API
     API --> PROF & CH & SPECS & RUN & INF & GR & BL & CP & IM & SIM & NAR
     RUN --> MOD

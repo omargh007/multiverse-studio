@@ -7,7 +7,12 @@ matplotlib.use("Agg")
 import pytest  # noqa: E402
 
 from multiverse_studio.core import api  # noqa: E402
-from multiverse_studio.core.types import GuardrailAnswers  # noqa: E402
+from multiverse_studio.core.types import (  # noqa: E402
+    Decision,
+    DecisionKind,
+    GuardrailAnswers,
+    Option,
+)
 from multiverse_studio.plots.importance import importance_figure  # noqa: E402
 from multiverse_studio.plots.spec_curve import categorize, spec_curve_figure  # noqa: E402
 from tests.conftest import make_result  # noqa: E402
@@ -34,6 +39,16 @@ def test_spec_curve_without_indicators_and_empty():
     empty = spec_curve_figure([], [])
     empty.canvas.draw()
     assert empty.ms_spec_order == []
+
+
+def test_long_control_sets_stay_distinguishable():
+    cols = ["weekly_hours_spent_studying", "has_job", "tiredness"]
+    options = tuple(Option(f"c{i}", " + ".join(cols[:i]), {"columns": cols[:i]}) for i in (1, 2, 3))
+    decision = Decision("controls", DecisionKind.CONTROLS, "Keep equal", options)
+    fig = spec_curve_figure([make_result(0, 1.0, 0.01, {"controls": "c1"})], [decision])
+    fig.canvas.draw()
+    labels = [t.get_text() for t in fig.axes[1].get_yticklabels()]
+    assert len(set(labels)) == len(labels) == 4
 
 
 def test_categorize():

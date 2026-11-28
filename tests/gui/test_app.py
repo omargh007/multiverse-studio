@@ -48,7 +48,8 @@ def test_welcome_then_full_workflow(at):
     at.run()
     assert not at.exception
     assert wb.session.verdict is not None
-    assert len(at.get("download_button")) == 3
+    assert len(at.get("download_button")) == 4
+    assert wb.pdf_bytes().startswith(b"%PDF")
     at.number_input(key=f"reported_{wb.run_id}").set_value(99.0).run()
     assert wb.session.cherry_pick.flagged and not at.exception
 

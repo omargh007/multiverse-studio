@@ -18,6 +18,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from matplotlib import font_manager
+
 
 @dataclass(frozen=True)
 class ChartPalette:
@@ -75,5 +77,7 @@ LINE_WIDTH = 1.5  # ~2 px
 CI_LINE_WIDTH = 1.0
 GRID_LINE_WIDTH = 0.6
 
-# Same family as the UI (system font); Matplotlib falls back silently in order.
-FONT_FAMILY = ["Segoe UI", "Helvetica Neue", "DejaVu Sans", "sans-serif"]
+# Same family as the UI (system font). Only installed fonts are listed, because Matplotlib
+# warns for every missing one. DejaVu Sans ships with Matplotlib.
+_INSTALLED = {f.name for f in font_manager.fontManager.ttflist}
+FONT_FAMILY = [f for f in ("Segoe UI", "Helvetica Neue") if f in _INSTALLED] + ["DejaVu Sans"]

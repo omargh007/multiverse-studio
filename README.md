@@ -48,7 +48,7 @@ One page, two columns. On the left is **the plan**: four blocks that unlock in o
 | 4. Fair comparisons | Answer three Yes / No / Not sure questions per variable. Unfair ones are left out. |
 | Run | Lock the plan, then every analysis runs in the background with a live preview. |
 
-The results show the verdict in one plain sentence, the specification curve (click any dot to see that analysis and its code), which choice matters most, the cherry-pick check, ready-to-use methods and results text, and **Save & share**: the Python script, the JSON report, the analysis file and a check that the plan still matches its fingerprint.
+The results show the verdict in one plain sentence, the specification curve (click any dot to see that analysis and its code), which choice matters most, the cherry-pick check, ready-to-use methods and results text, and **Save & share**: the Python script, the JSON report, the analysis file, a PDF report and a check that the plan still matches its fingerprint.
 
 Light and dark mode: the ⋮ menu at the top right → Settings. A **Display** button sets the text size (100 / 115 / 130%) for classroom projectors.
 
